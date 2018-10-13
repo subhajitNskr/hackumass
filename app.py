@@ -67,8 +67,7 @@ def getFeedback():
 @app.route('/getFooodHistory')
 def getFoodHistory():
     # For testing purposes
-    return jsonify({
-              "item": [
+    return jsonify([
                 {
                   "meals": {
                     "breakfast": [],
@@ -116,6 +115,6 @@ def getFoodHistory():
                   "day": "Wednesday"
                 }
               ]
-            })
+            )
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port = 5000)

@@ -6,25 +6,35 @@ Created on Sat Oct 13 01:06:04 2018
 @author: kits
 """
 
+# testQuery:
+# curl http://localhost:5000/Hello%21%20I%20ate%20broccoli%2C%20rice%20and%20meat%20for%20dinner.
+
 import preprocessing
 import abc
 
 from flask import Flask, request, jsonify
 import preprocessing
+from database_of_recorded_food_names import database
 # import urllib2
 import urllib.parse
+import meal_query_from_input
+
 app = Flask(__name__)
 
+db = database()
 
 @app.route('/<name>')
 def query_example(name):
     name = urllib.parse.unquote(name)
     # name = urllib2.unquote(name)
     words = preprocessing.process(name)
+    _, foodNames = meal_query_from_input.find_meal_to_store_data(name)
+    db.addToDatabase(foodNames)
+    print(foodNames)
     string = ''
     for word in words:
         string = string+' ' + word
-    return jsonify({'name':name})
+    return jsonify({'name':foodNames})
     return string
 
 @app.route('/entry')
@@ -65,7 +75,13 @@ def getFeedback():
     return feedback
 
 @app.route('/getFooodHistory')
-def getFoodHistory():
+def getFooodHistory():
+    # print(db.json)
+    # return jsonify({'yuvraj':'pritish'})
+    return jsonify(db.json)
+
+@app.route('/getFooodHistoryBackup')
+def getFooodHistoryBackup():
     # For testing purposes
     return jsonify([
                 {
@@ -81,7 +97,7 @@ def getFoodHistory():
                       "salads"
                     ]
                   },
-                  "summary": "Good that you ate Brocolli, next time avoid cheese and noodles",
+                  "summary": "Good that you ate Brocolli, next time avoid cheese and noodles. Too Bad!!",
                   "day": "Wednesday"
                 },
                 {
@@ -97,7 +113,7 @@ def getFoodHistory():
                     ]
                   },
                   "summary": "Good that you ate Brocolli, next time avoid cheese and noodles",
-                  "day": "Wednesday"
+                  "day": "Thursday"
                 },
                 {
                   "meals": {
@@ -112,9 +128,14 @@ def getFoodHistory():
                     ]
                   },
                   "summary": "Good that you ate Brocolli, next time avoid cheese and noodles",
-                  "day": "Wednesday"
+                  "day": "Friday"
                 }
               ]
             )
+
+    @app.route('/submitForm')
+    def getFeedback():
+        return jsonify({'status': 'ok done!'})
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port = 5000)

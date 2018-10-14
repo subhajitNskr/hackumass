@@ -12,6 +12,7 @@ import json
 from json import JSONEncoder
 from fuzzywuzzy import process
 import pickle
+import random
 feedbacks = []
 
 def modify_name(x) :
@@ -32,7 +33,9 @@ class NutritionManager:
     
     def __init__(self, database = None) :
         if NutritionManager.__instance != None:
-            return Exception("Nutrition manager is a singleton class")
+            self.users = {}
+            self.database = database
+            NutritionManager.__instance = self
         else :
             self.users = {}
             self.database = database
@@ -343,25 +346,25 @@ class MealScore:
             fat_score = 1
 
         if calorie_score == 0 and sugar_score == 0 and colesterol_score == 0 and fat_score ==0 :
-            self.feedback = "Wow, you have a really good food habit"
+            self.feedback = ["Keep it going.", "You're doing great", "High Five on having a good diet"][random.randrange(3)]
 
         elif colesterol_score > 0 :
-            self.feedback = "You should watch out your cholestorol. Try some avocados maybe"
+            self.feedback = ["You should watch out your cholesterol", "You need to eat healthier", "Try to avoid cholesterol"][random.randrange(3)]
 
         elif sugar_score > 0:
             print(self.sugar_val, sugar_score)
-            self.feedback = "Stay away from cookies"
+            self.feedback = ["Try to reduce your sugar intake", "You need to control your sweet tooth"][random.randrange(2)]
 
         elif calorie_score > 0:
-            self.feedback = "Please reduce your food intake"
+            self.feedback = ["You've been taking in too many calories", "You need to control your calorie intake", "You should reduce your diet"][random.randrange(3)]
 
         elif fat_score > 0:
-            self.feedback = "You are doing good, but maybe try some brocolli"
+            self.feedback = ["Avoid fat", "Avoid food with saturated and trans fats", "Try low fat food options"][random.randrange(3)]
 
         elif calorie_score < 0:
-            self.feedback = "Please eat something"
+            self.feedback = ["Please eat something", "Eat something", "You're not eating enough food"][random.randrange(3)]
         else :
-            self.feedback = "Good job"
+            self.feedback = ["Good job"][random.randrange(3)]
 
 
 class UserScore:
@@ -383,43 +386,43 @@ class UserScore:
             self.bmi = 703*weight/height**2
         
 
-
+#
 pre = os.path.dirname(os.path.realpath(__file__))
 fname = 'dataset.xlsx'
 path = os.path.join(pre, fname)
-# print(path)
+## print(path)
 data_xls = pd.read_excel(path)
-# print(data_xls.shape)
-data_xls.dropna()
-column_to_drop = data_xls.columns[49:68]
-data_xls.drop(column_to_drop, axis=1, inplace = True)
-column_to_drop = data_xls.columns[16:30]
-data_xls.drop(column_to_drop, axis=1, inplace = True)
-column_to_drop = data_xls.columns[14:15]
-
-data_xls.drop(column_to_drop, axis =1, inplace = True)
-column_to_drop = data_xls.columns[43:44]
-data_xls.drop(column_to_drop, axis =1, inplace = True)
-column_to_drop = data_xls.columns[47:48]
-data_xls.drop(column_to_drop, axis =1, inplace = True)
-column_to_drop = data_xls.columns[10:13]
-data_xls.drop(column_to_drop, axis =1, inplace = True)
-# print(data_xls.shape)
-#print(modify_name("milk, human"))
-
+## print(data_xls.shape)
+#data_xls.dropna()
+#column_to_drop = data_xls.columns[49:68]
+#data_xls.drop(column_to_drop, axis=1, inplace = True)
+#column_to_drop = data_xls.columns[16:30]
+#data_xls.drop(column_to_drop, axis=1, inplace = True)
+#column_to_drop = data_xls.columns[14:15]
+#
+#data_xls.drop(column_to_drop, axis =1, inplace = True)
+#column_to_drop = data_xls.columns[43:44]
+#data_xls.drop(column_to_drop, axis =1, inplace = True)
+#column_to_drop = data_xls.columns[47:48]
+#data_xls.drop(column_to_drop, axis =1, inplace = True)
+#column_to_drop = data_xls.columns[10:13]
+#data_xls.drop(column_to_drop, axis =1, inplace = True)
+## print(data_xls.shape)
+##print(modify_name("milk, human"))
+#
 np_data = data_xls.values
-#print(np_data)
-# print("modified_ data")
-# for i in range(1, np_data.shape[0]): #np_data.shape[0]):
-#     np_data[i, 1] = modify_name(np_data[i, 1])
-
-# print(np_data)
-
-nutriInst = NutritionManager(np_data)
-#nutriInst.add_meal("aaa", 100, ["rice, pork"], "dinner")
-# nutriInst.add_meal("bbb", 100, ["rice, eggs"], "lunch")
-nutriInst.add_meal("bbb", 100, ["cereal"], "dinner")
-nutriInst.get_food_history("bbb")
-nutriInst.return_food_histroy("bbb")
-# print(nutriInst.get_day_meal_score("aaa").calorie_val)
-# print (nutriInst.get_feedback("aaa"))
+##print(np_data)
+## print("modified_ data")
+## for i in range(1, np_data.shape[0]): #np_data.shape[0]):
+##     np_data[i, 1] = modify_name(np_data[i, 1])
+#
+## print(np_data)
+#
+#nutriInst = NutritionManager(np_data)
+##nutriInst.add_meal("aaa", 100, ["rice, pork"], "dinner")
+## nutriInst.add_meal("bbb", 100, ["rice, eggs"], "lunch")
+#nutriInst.add_meal("bbb", 100, ["cereal"], "dinner")
+#nutriInst.get_food_history("bbb")
+#nutriInst.return_food_histroy("bbb")
+## print(nutriInst.get_day_meal_score("aaa").calorie_val)
+## print (nutriInst.get_feedback("aaa"))

@@ -48,9 +48,9 @@ class NutritionManager:
 
     ##################To Be done###############################
     def  get_food_score(self, food):
-        with open('../truncated_dict.pkl', 'rb') as td:
+        with open('truncated_dict.pkl', 'rb') as td:
             truncated_dict = pickle.load(td)
-        with open('../set_of_keywords.pkl', 'rb') as sk:
+        with open('set_of_keywords.pkl', 'rb') as sk:
             set_of_keywords = pickle.load(sk)
             
         list_of_vals = [*truncated_dict]

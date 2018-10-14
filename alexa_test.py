@@ -22,6 +22,7 @@ def get_(subquery):
 
 def get_feedback():
     data = requests.get(backend_url + 'feedback', headers={'User-Agent':'test'})
+    print(data.text, file=sys.stderr)
     return json.loads(data.text, encoding='utf8')
 
 
@@ -65,7 +66,7 @@ def yes_intent():
     else:
         reply = get_feedback()
         context = "Feedback"
-        return statement(reply[0]['response'])
+        return statement(reply[0]['summary'])
     
 
 @ask.intent("AMAZON.FallbackIntent")

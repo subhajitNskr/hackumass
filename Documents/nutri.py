@@ -385,44 +385,8 @@ class UserScore:
         else :
             self.bmi = 703*weight/height**2
         
-
-#
 pre = os.path.dirname(os.path.realpath(__file__))
 fname = 'dataset.xlsx'
 path = os.path.join(pre, fname)
-## print(path)
 data_xls = pd.read_excel(path)
-## print(data_xls.shape)
-#data_xls.dropna()
-#column_to_drop = data_xls.columns[49:68]
-#data_xls.drop(column_to_drop, axis=1, inplace = True)
-#column_to_drop = data_xls.columns[16:30]
-#data_xls.drop(column_to_drop, axis=1, inplace = True)
-#column_to_drop = data_xls.columns[14:15]
-#
-#data_xls.drop(column_to_drop, axis =1, inplace = True)
-#column_to_drop = data_xls.columns[43:44]
-#data_xls.drop(column_to_drop, axis =1, inplace = True)
-#column_to_drop = data_xls.columns[47:48]
-#data_xls.drop(column_to_drop, axis =1, inplace = True)
-#column_to_drop = data_xls.columns[10:13]
-#data_xls.drop(column_to_drop, axis =1, inplace = True)
-## print(data_xls.shape)
-##print(modify_name("milk, human"))
-#
 np_data = data_xls.values
-##print(np_data)
-## print("modified_ data")
-## for i in range(1, np_data.shape[0]): #np_data.shape[0]):
-##     np_data[i, 1] = modify_name(np_data[i, 1])
-#
-## print(np_data)
-#
-#nutriInst = NutritionManager(np_data)
-##nutriInst.add_meal("aaa", 100, ["rice, pork"], "dinner")
-## nutriInst.add_meal("bbb", 100, ["rice, eggs"], "lunch")
-#nutriInst.add_meal("bbb", 100, ["cereal"], "dinner")
-#nutriInst.get_food_history("bbb")
-#nutriInst.return_food_histroy("bbb")
-## print(nutriInst.get_day_meal_score("aaa").calorie_val)
-## print (nutriInst.get_feedback("aaa"))

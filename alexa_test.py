@@ -3,26 +3,26 @@ from flask_ask import Ask, statement, question, session
 import json
 import requests
 import time
-import unidecode
+import urllib
+import logging
+import sys
 
 app = Flask(__name__)
-ask = Ask(app, "/reddit_reader")
+ask = Ask(app, "/alexa")
+backend_url = "https://cebd9d6b.ngrok.io/alexa/"
+context = "Initial context"
 
-def get_headlines():
-	user_pass_dict = {'user' : 'abhishekmandal1907',
-						'password' : 'Deep@1994',
-						'api_type' : 'json'}
-	sess = requests.Session()
-	sess.headers.update({'User-Agent' : "testing alexa"})
-	sess.post('https://www.reddit.com/api/login', data = user_pass_dict)
-	time.sleep(1)
+# logging.getLogger('flask_ask').setLevel(logging.DEBUG)
 
-	url = 'https://www.reddit.com/r/worldnews/.json?limit=10'
-	html = sess.get(url)
-	data = json.loads(html.content.decode('utf-8'))
-	titles = [unidecode.unidecode(listing['data']['title']) for listing in data['data']['children']]
-	titles = '... '.join([i for i in titles])
-	return titles
+def get_(subquery):
+	data = requests.get(backend_url + subquery, headers={'User-Agent':'test'})
+	print(data.text, file=sys.stderr)
+	print(subquery, file=sys.stderr)
+	return json.loads(data.text, encoding='utf8')
+
+def get_feedback():
+    data = requests.get(backend_url + 'feedback', headers={'User-Agent':'test'})
+    return json.loads(data.text, encoding='utf8')
 
 
 @app.route('/')
@@ -31,20 +31,47 @@ def homepage():
 
 @ask.launch
 def start_skill():
-	welcome_message = "Hello there, would you like the news?"
+	welcome_message = "Hi! Let's talk about what you ate today?"
 	return question(welcome_message)
 
-@ask.intent("YesIntent")
-def share_headlines():
-	headlines = get_headlines()
-	headline_msg = 'The current world news headlines are {}'.format(headlines)
-	return statement(headline_msg)
 
-@ask.intent("NoIntent")
+
+@ask.intent("FoodSearch")
+def search_food(Food, Time):
+    global context
+    context = "Food Search"
+	query = {'Food' : Food, 'Time' : Time}
+	reply_query = get_(urllib.parse.urlencode(query))
+	return question(reply_query[0]['response'])
+
+
+@ask.intent("AMAZON.NoIntent")
 def no_intent():
-	bye_text = 'Okay then... Bye'
-	return statement(bye_text)
+    global context
+    if(context == "Food Search"):
+        text = 'Do you want to know how you did today?'
+        context = "Feedback"
+        return question(text)
+    else:
+        text = 'Okay then... Bye'
+        return statement(text)
 
+@ask.intent("AMAZON.YesIntent")
+def yes_intent():
+    global context
+    if (context == "Food Search"):
+        text = 'Okay! I\'m listening. Go on?'
+        return question(text)
+    else:
+        reply = get_feedback()
+        context = "Feedback"
+        return statement(reply[0]['response'])
+    
+
+@ask.intent("AMAZON.FallbackIntent")
+def fallback_intent():
+    text = 'Sorry. I didn\'t catch that. Please try again?'
+    return question(text)
 
 if __name__=='__main__':
 	app.run(debug=True)
